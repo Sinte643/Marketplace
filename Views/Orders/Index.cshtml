@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Marketplace.Models.Order>
+
+@{
+    ViewData["Title"] = "История заказов";
+}
+
+<h1>История заказов</h1>
+
+<div class="orders-table-container">
+    <table class="orders-table">
+        <thead>
+            <tr>
+                <th>ID заказа</th>
+                <th>Дата получения</th>
+                <th>Время получения</th>
+                <th>Оплата</th>
+                <th>Общая сумма</th>
+                <th>Кол-во товаров</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td class="order-id">@order.OrderNumber</td>
+                    <td>@order.DeliveryDate.ToString("dd MMMM yyyy")</td>
+                    <td>@order.DeliveryTime</td>
+                    <td>@order.PaymentMethod</td>
+                    <td class="order-amount">@order.TotalAmount.ToString("N0") ₽</td>
+                    <td class="order-count">@order.ItemCount</td>
+                    <td>
+                        @switch (order.Status)
+                        {
+                            case "Доставлен":
+                                <span style="color: #27ae60; font-weight: 600;">✅ Доставлен</span>
+                                break;
+                            case "Отправлен":
+                                <span style="color: #3498db; font-weight: 600;">📦 Отправлен</span>
+                                break;
+                            case "В обработке":
+                                <span style="color: #f39c12; font-weight: 600;">🔄 В обработке</span>
+                                break;
+                            case "Ожидает оплаты":
+                                <span style="color: #e74c3c; font-weight: 600;">⏳ Ожидает оплаты</span>
+                                break;
+                            default:
+                                <span>@order.Status</span>
+                                break;
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

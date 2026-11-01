@@ -1,0 +1,110 @@
+﻿@model Marketplace.Models.User
+
+@{
+    ViewData["Title"] = "Личный кабинет";
+    var cards = ViewBag.Cards as List<Marketplace.Models.Card>;
+}
+
+<h1>Личный кабинет</h1>
+
+<div class="profile-container">
+    <div class="profile-info">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-data-grid">
+            <div class="profile-data-row">@Model.LastName</div>
+            <div class="profile-data-row">@Model.FirstName</div>
+            @if (!string.IsNullOrEmpty(Model.MiddleName))
+            {
+                <div class="profile-data-row">@Model.MiddleName</div>
+            }
+            <div class="profile-data-row">@Model.Email</div>
+            <div class="profile-data-row">@Model.Phone</div>
+        </div>
+        @if (Model.Role != "Admin")
+        {
+            <a href="/Account/EditProfile" class="btn btn-primary" style="margin-top: 15px;">✏️ Редактировать</a>
+        }
+    </div>
+
+    <div class="profile-cards">
+        <h2>💳 Мои карты</h2>
+        @if (cards != null && cards.Any())
+        {
+            <div class="cards-grid">
+                @foreach (var card in cards)
+                {
+                    <div class="card-display">
+                        <div class="card-chip">💳</div>
+                        <div class="card-number-display">•••• •••• •••• @card.CardNumber.Substring(12)</div>
+                        <div class="card-bottom">
+                            <span>@card.CardType</span>
+                            <span>@card.ExpiryMonth/@card.ExpiryYear</span>
+                        </div>
+                        <a href="/Account/DeleteCard/@card.Id" class="btn btn-danger btn-sm" style="margin-top: 10px; display: block; text-align: center;" onclick="return confirm('Удалить карту?')">🗑️ Удалить</a>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="no-cards">
+                <span>💳</span>
+                <p>У вас пока нет привязанных карт.</p>
+            </div>
+        }
+    </div>
+
+    @if (Model.Role != "Admin")
+    {
+        <div class="add-card-section">
+            <h2>➕ Привязать карту</h2>
+            <form asp-action="AddCard" method="post" onsubmit="return validateCardExpiry()">
+                <div class="form-group">
+                    <input name="CardNumber" id="cardNumberInput" class="form-control card-number-input" placeholder="0000 0000 0000 0000" maxlength="16" required oninput="detectCardType()" />
+                    <div id="cardTypeResult" style="margin-top: 10px; font-weight: 600; font-size: 1.1rem;"></div>
+                </div>
+                <input type="hidden" name="CardType" id="cardTypeHidden" value="VISA" />
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input name="ExpiryMonth" id="expiryMonth" class="form-control" placeholder="ММ" maxlength="2" required style="flex: 1;" />
+                    <input name="ExpiryYear" id="expiryYear" class="form-control" placeholder="ГГ" maxlength="2" required style="flex: 1;" />
+                    <input name="CVV" class="form-control" placeholder="CVV" maxlength="3" required style="flex: 1;" />
+                </div>
+                <div id="expiryError" style="color: #e74c3c; font-weight: 600; margin-bottom: 10px; display: none;">Срок действия карты истёк!</div>
+                <button type="submit" class="btn btn-success">Привязать</button>
+            </form>
+            <script>
+                function detectCardType() {
+                    var number = document.getElementById('cardNumberInput').value.replace(/\s/g, '');
+                    var result = document.getElementById('cardTypeResult');
+                    var hidden = document.getElementById('cardTypeHidden');
+                    if (number.length >= 1) {
+                        if (number.startsWith('4')) { result.innerHTML = '💙 VISA'; result.style.color = '#1a1f71'; hidden.value = 'VISA'; }
+                        else if (number.startsWith('5')) { result.innerHTML = '❤️ MasterCard'; result.style.color = '#eb001b'; hidden.value = 'MasterCard'; }
+                        else if (number.startsWith('2')) { result.innerHTML = '💚 МИР'; result.style.color = '#27ae60'; hidden.value = 'МИР'; }
+                        else { result.innerHTML = '💳 Тип не определён'; result.style.color = '#6c757d'; }
+                    } else { result.innerHTML = ''; }
+                }
+                function validateCardExpiry() {
+                    var month = parseInt(document.getElementById('expiryMonth').value);
+                    var year = parseInt(document.getElementById('expiryYear').value) + 2000;
+                    var now = new Date();
+                    var currentMonth = now.getMonth() + 1;
+                    var currentYear = now.getFullYear();
+                    var errorDiv = document.getElementById('expiryError');
+                    if (isNaN(month) || month < 1 || month > 12) {
+                        errorDiv.innerHTML = 'Месяц должен быть от 1 до 12!'; errorDiv.style.display = 'block'; return false;
+                    }
+                    if (year < currentYear || (year === currentYear && month < currentMonth)) {
+                        errorDiv.innerHTML = 'Срок действия карты истёк!'; errorDiv.style.display = 'block'; return false;
+                    }
+                    errorDiv.style.display = 'none'; return true;
+                }
+            </script>
+        </div>
+    }
+
+    <div class="profile-actions">
+        <a href="/Orders" class="btn btn-primary">📋 Мои заказы</a>
+        <a href="/Account/Logout" class="btn btn-danger">🚪 Выйти</a>
+    </div>
+</div>

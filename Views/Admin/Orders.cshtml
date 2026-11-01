@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Marketplace.Models.Order>
+
+@{
+    ViewData["Title"] = "Управление заказами";
+}
+
+<h1>Управление заказами</h1>
+
+<div class="orders-table-container">
+    <table class="orders-table">
+        <thead>
+            <tr>
+                <th>ID заказа</th>
+                <th>Дата</th>
+                <th>Время</th>
+                <th>Оплата</th>
+                <th>Сумма</th>
+                <th>Кол-во</th>
+                <th>Статус</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.OrderNumber</td>
+                    <td>@order.DeliveryDate.ToString("dd.MM.yyyy")</td>
+                    <td>@order.DeliveryTime</td>
+                    <td>@order.PaymentMethod</td>
+                    <td>@order.TotalAmount.ToString("N0") ₽</td>
+                    <td>@order.ItemCount</td>
+                    <td>@order.Status</td>
+                    <td>
+                        <form method="post" action="/Admin/UpdateOrderStatus" asp-antiforgery="true" style="display: flex; gap: 5px; align-items: center;">
+                            <input type="hidden" name="id" value="@order.Id" />
+                            <select name="status" class="form-control" style="width: 150px;">
+                                <option selected="@(order.Status == "В обработке")">В обработке</option>
+                                <option selected="@(order.Status == "Ожидает оплаты")">Ожидает оплаты</option>
+                                <option selected="@(order.Status == "Отправлен")">Отправлен</option>
+                                <option selected="@(order.Status == "Доставлен")">Доставлен</option>
+                                <option selected="@(order.Status == "Отменён")">Отменён</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary btn-sm">💾</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 20px;">
+    <a href="/Admin" class="btn btn-secondary">← Назад в админ-панель</a>
+</div>

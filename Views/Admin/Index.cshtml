@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Админ-панель";
+}
+
+<h1>Админ-панель</h1>
+
+<div class="admin-stats">
+    <div class="stat-card">
+        <span class="stat-icon">👕</span>
+        <h3>@ViewBag.ProductsCount</h3>
+        <p>Товаров</p>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon">📦</span>
+        <h3>@ViewBag.TotalStock</h3>
+        <p>На складе</p>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon">📋</span>
+        <h3>@ViewBag.OrdersCount</h3>
+        <p>Заказов всего</p>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon">👥</span>
+        <h3>@ViewBag.UsersCount</h3>
+        <p>Пользователей</p>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon">💰</span>
+        <h3>@ViewBag.TodayOrders</h3>
+        <p>Заказов сегодня</p>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon">💵</span>
+        <h3>@ViewBag.TodaySum.ToString("N0") ₽</h3>
+        <p>Сумма за сегодня</p>
+    </div>
+</div>
+
+<div class="admin-links">
+    <a href="/Admin/Products" class="admin-link-card">📦 Управление товарами</a>
+    <a href="/Admin/Orders" class="admin-link-card">📋 Управление заказами</a>
+    <a href="/Admin/Users" class="admin-link-card">👥 Пользователи</a>
+</div>

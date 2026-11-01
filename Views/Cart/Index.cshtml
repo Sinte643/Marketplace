@@ -1,0 +1,82 @@
+﻿@model List<Marketplace.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Корзина";
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+<h1>Корзина</h1>
+
+@if (TempData["CartError"] is string cartError)
+{
+    <div class="alert alert-danger">@cartError</div>
+}
+
+<div class="breadcrumbs">
+    <a href="/">Главная</a> &gt;
+    <a href="/Catalog">Каталог</a> &gt;
+    <span>Корзина</span>
+</div>
+
+<div class="cart-container">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="cart-empty">
+            <p>Корзина пуста</p>
+            <a href="/Catalog" class="btn btn-primary">Перейти в каталог</a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-items">
+            @foreach (var item in Model)
+            {
+                <div class="cart-item-row">
+                    <div class="cart-item-info">
+                        <h3>@item.Name</h3>
+                        <p class="cart-item-unit-price">Цена: @item.Price.ToString("N0") ₽ за шт.</p>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <a href="/Cart/Update/@item.ProductId?quantity=@(item.Quantity - 1)" class="qty-btn">-</a>
+                        <span class="qty-value">@item.Quantity</span>
+                        <a href="/Cart/Update/@item.ProductId?quantity=@(item.Quantity + 1)" class="qty-btn">+</a>
+                    </div>
+                    <div class="cart-item-total">
+                        Сумма: @item.Total.ToString("N0") ₽
+                    </div>
+                    <div class="cart-item-remove">
+                        <a href="/Cart/Remove/@item.ProductId">Удалить</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="cart-summary">
+            <div class="cart-summary-row">
+                <span>Товары:</span>
+                <span>@Model.Sum(i => i.Total).ToString("N0") ₽</span>
+            </div>
+            <div class="cart-summary-row">
+                <span>Доставка:</span>
+                <span>0 ₽</span>
+            </div>
+            <div class="cart-summary-row cart-total">
+                <span>К оплате:</span>
+                <span>@Model.Sum(i => i.Total).ToString("N0") ₽</span>
+            </div>
+
+            @if (userId == null)
+            {
+                <div class="alert alert-warning" style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; text-align: center;">
+                    Чтобы оформить заказ, <a href="/Account/Login" style="color: #e94560; font-weight: 600;">войдите</a> или <a href="/Account/Register" style="color: #e94560; font-weight: 600;">зарегистрируйтесь</a>.
+                </div>
+            }
+            else
+            {
+                <form method="post" action="/Cart/Checkout" asp-antiforgery="true" style="display: flex; gap: 15px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-success">Заказать</button>
+                </form>
+            }
+        </div>
+    }
+</div>

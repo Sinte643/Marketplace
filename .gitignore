@@ -1,0 +1,30 @@
+## Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.log
+*.tmp
+
+## Секреты и локальные настройки
+appsettings.*.local.json
+secrets.json
+*.pfx
+
+## Файлы, загружаемые через админ-панель (папка остаётся в репозитории, содержимое нет)
+wwwroot/images/*
+!wwwroot/images/.gitkeep
+
+## Прочее
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
