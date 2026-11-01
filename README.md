@@ -33,7 +33,7 @@
 Нужно: [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) и SQL Server LocalDB (идёт вместе с Visual Studio).
 
 ```bash
-git clone <адрес-репозитория>
+git clone git clone https://github.com/Sinte643/Marketplace.git
 cd Marketplace
 dotnet run
 ```
